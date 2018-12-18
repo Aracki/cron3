@@ -50,7 +50,7 @@ func main() {
 
 	c := cron.New()
 	c.Start()
-	if err := c.AddFunc("*/3 * * * *", func() {
+	if err := c.AddFunc(viper.GetString("cron_time"), func() {
 		log.Println(cronFunc())
 	}); err != nil {
 		log.Fatal("cannot parse cron spec:", err.Error())
