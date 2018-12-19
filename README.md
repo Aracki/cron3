@@ -8,5 +8,10 @@
 ## Install
 
 * Make **_config.yaml_** based on **_config-template.yaml_**
-* `file_name` is the name of the `.bson` document
+* `file_name` is the relative path of the `.bson` document
 * `cron_time` is the cron expression (interval for executing func)
+
+## Run
+
+* `go build`
+* `./cron3 &`
