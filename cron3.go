@@ -2,13 +2,19 @@ package main
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"log"
 	"os/exec"
+	"strconv"
+	"time"
 
 	"github.com/robfig/cron"
 	"github.com/spf13/viper"
 )
 
+var svc *s3.S3
+
+// mongoDump() will create .bson file used for backups
 func mongoDump() error {
 
 	cmd := exec.Command("mongodump")
@@ -22,22 +28,38 @@ func mongoDump() error {
 }
 
 func cronFunc() error {
+
+	log.Println("executing mongodump command...")
 	if err := mongoDump(); err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Println("uploading to s3...")
-	svc := initS3()
-	if key, err := uploadToS3(*svc); err != nil {
+	// generate key for file based on current date
+	// eg. 2019/January/3
+	year, month, day := time.Now().Date()
+	key := strconv.Itoa(year) + "/" + month.String() + "/" + strconv.Itoa(day)
+
+	log.Println("uploading new backup to s3...")
+	if err := uploadToS3(*svc, key); err != nil {
 		log.Fatal(err.Error())
 	} else {
 		log.Printf("uploaded %s", key)
+	}
+
+	log.Println("deleting old backups from s3...")
+	if key, err := deleteFromS3(*svc, key); err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Printf("successfully deleted object with key=%s \n", key)
 	}
 
 	return nil
 }
 
 func main() {
+
+	// init s3 service
+	svc = initS3()
 
 	// reading configurations from config.yml
 	viper.SetConfigType("yaml")
