@@ -14,4 +14,4 @@
 ## Run
 
 * `go build`
-* `./cron3 &`
+* `./cron3 >> cron3_log &`
