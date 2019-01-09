@@ -70,6 +70,7 @@ func main() {
 		log.Fatalln("fatal error config file: ", err)
 	}
 
+	log.Println("starting new cron job...")
 	c := cron.New()
 	c.Start()
 	if err := c.AddFunc(viper.GetString("cron_time"), func() {
