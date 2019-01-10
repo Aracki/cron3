@@ -40,14 +40,14 @@ func cronFunc() error {
 	key := strconv.Itoa(year) + "/" + month.String() + "/" + strconv.Itoa(day)
 
 	log.Println("uploading new backup to s3...")
-	if err := uploadToS3(*svc, key); err != nil {
+	if err := uploadToS3(svc, key); err != nil {
 		log.Fatal(err.Error())
 	} else {
 		log.Printf("uploaded %s", key)
 	}
 
 	log.Println("deleting old backups from s3...")
-	if key, err := deleteFromS3(*svc, key); err != nil {
+	if key, err := deleteFromS3(svc, key); err != nil {
 		log.Println(err.Error())
 	} else {
 		log.Printf("successfully deleted object with key=%s \n", key)

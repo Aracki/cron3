@@ -33,7 +33,7 @@ func initS3() *s3.S3 {
 }
 
 // uploadToS3 will upload mongo dump file to s3 bucket with destination key
-func uploadToS3(svc s3.S3, dstKey string) (err error) {
+func uploadToS3(svc *s3.S3, dstKey string) (err error) {
 
 	ctx := context.Background()
 	f, err := os.Open(viper.GetString("file_name"))
@@ -65,7 +65,7 @@ func uploadToS3(svc s3.S3, dstKey string) (err error) {
 }
 
 // deleteFromS3 will delete backup if there are more than 3 backups for that specific month
-func deleteFromS3(svc s3.S3, key string) (deletedKey string, err error) {
+func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 
 	ctx := context.Background()
 	bucketName := viper.GetString("bucket_name")
