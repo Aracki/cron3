@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/service/s3"
 	"log"
 	"os/exec"
 	"strconv"
@@ -11,8 +10,6 @@ import (
 	"github.com/robfig/cron"
 	"github.com/spf13/viper"
 )
-
-var svc *s3.S3
 
 // mongoDump() will create .bson file used for backups
 func mongoDump() error {
@@ -39,6 +36,10 @@ func cronFunc() error {
 	year, month, day := time.Now().Date()
 	key := strconv.Itoa(year) + "/" + month.String() + "/" + strconv.Itoa(day)
 
+	// S3 methods are safe to use concurrently. It is not safe to
+	// modify mutate any of the struct's properties though.
+	svc := initS3()
+
 	log.Println("uploading new backup to s3...")
 	if err := uploadToS3(svc, key); err != nil {
 		log.Fatal(err.Error())
@@ -58,9 +59,6 @@ func cronFunc() error {
 
 func main() {
 
-	// init s3 service
-	svc = initS3()
-
 	// reading configurations from config.yml
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
@@ -79,5 +77,5 @@ func main() {
 		log.Fatal("cannot parse cron spec:", err.Error())
 	}
 
-	select {}
+	cronFunc()
 }
