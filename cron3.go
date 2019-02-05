@@ -77,5 +77,5 @@ func main() {
 		log.Fatal("cannot parse cron spec:", err.Error())
 	}
 
-	cronFunc()
+	select {}
 }
