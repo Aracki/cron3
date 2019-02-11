@@ -61,7 +61,6 @@ func uploadToS3(svc *s3.S3, dstKey string) (err error) {
 		return err
 	}
 
-	log.Printf("%s uploaded to %s\n", dstKey, bucketName)
 	return nil
 }
 
@@ -90,7 +89,7 @@ func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 	if len(objects.Contents) > 3 {
 		firstKey := objects.Contents[0].Key
 
-		dltObj, err := svc.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
+		_, err := svc.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
 			Bucket: aws.String(bucketName),
 			Key:    firstKey,
 		})
@@ -98,9 +97,10 @@ func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 			return "", err
 		}
 
-		return dltObj.String(), err
+		dKey := *firstKey
+		return dKey, err
 	} else {
 		return "", errors.New(
-			fmt.Sprintf("bucket with prefix=%s have no more than 3 objects", prefix))
+			fmt.Sprintf("bucket with prefix=%s has no more than 3 objects", prefix))
 	}
 }

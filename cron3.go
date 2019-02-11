@@ -24,9 +24,10 @@ func mongoDump() error {
 	return nil
 }
 
-func cronFunc() error {
+func cronFunc() {
 
-	log.Println("executing mongodump command...")
+	log.Println(".............")
+	log.Println("starting cron")
 	if err := mongoDump(); err != nil {
 		log.Fatal(err.Error())
 	}
@@ -40,21 +41,20 @@ func cronFunc() error {
 	// modify mutate any of the struct's properties though.
 	svc := initS3()
 
-	log.Println("uploading new backup to s3...")
+	log.Println("uploading new backup to s3")
 	if err := uploadToS3(svc, key); err != nil {
 		log.Fatal(err.Error())
 	} else {
 		log.Printf("uploaded %s", key)
 	}
 
-	log.Println("deleting old backups from s3...")
 	if key, err := deleteFromS3(svc, key); err != nil {
 		log.Println(err.Error())
+	} else if key == "" {
+		log.Printf("nothing to delete")
 	} else {
 		log.Printf("successfully deleted object with key=%s \n", key)
 	}
-
-	return nil
 }
 
 func main() {
@@ -72,7 +72,7 @@ func main() {
 	c := cron.New()
 	c.Start()
 	if err := c.AddFunc(viper.GetString("cron_time"), func() {
-		log.Println(cronFunc())
+		cronFunc()
 	}); err != nil {
 		log.Fatal("cannot parse cron spec:", err.Error())
 	}
