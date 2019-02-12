@@ -87,17 +87,17 @@ func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 	}
 
 	if len(objects.Contents) > 3 {
-		firstKey := objects.Contents[0].Key
+		lastKey := objects.Contents[len(objects.Contents)-1].Key
 
 		_, err := svc.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
 			Bucket: aws.String(bucketName),
-			Key:    firstKey,
+			Key:    lastKey,
 		})
 		if err != nil {
 			return "", err
 		}
 
-		dKey := *firstKey
+		dKey := *lastKey
 		return dKey, err
 	} else {
 		return "", errors.New(
