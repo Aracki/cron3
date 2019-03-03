@@ -73,7 +73,7 @@ func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 	// return whole put but last element
 	prefix := path.Dir(key)
 
-	log.Println("listing objects with prefix: ", prefix)
+	log.Println("listing objects with prefix:", prefix)
 	objects, err := svc.ListObjects(&s3.ListObjectsInput{
 		Bucket: aws.String(bucketName),
 		Prefix: aws.String(prefix),
@@ -83,11 +83,11 @@ func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 	}
 
 	if len(objects.Contents) == 0 {
-		return "", errors.New("bucket already empty")
+		return "", errors.New("bucket is empty")
 	}
 
 	if len(objects.Contents) > 3 {
-		lastKey := objects.Contents[len(objects.Contents)-1].Key
+		lastKey := objects.Contents[len(objects.Contents)-4].Key
 
 		_, err := svc.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
 			Bucket: aws.String(bucketName),
