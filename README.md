@@ -26,4 +26,4 @@ Go utility program for day-to-day Mongo backups. Used by [countgo](https://githu
 
 ### Run mongo in a docker container 
 
-docker run --name mongo --rm -p 27017:27017 mongo:latest
+* `docker run --name mongo --rm -p 27017:27017 mongo:latest`
