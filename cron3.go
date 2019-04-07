@@ -35,7 +35,7 @@ func cronFunc() {
 	// generate key for file based on current date
 	// eg. 2019/January/3
 	year, month, day := time.Now().Date()
-	key := strconv.Itoa(year) + "/" + month.String() + "/" + strconv.Itoa(day)
+	key := strconv.Itoa(year) + "/" + month.String() + "/" + strconv.Itoa(day) + ".bson"
 
 	// S3 methods are safe to use concurrently. It is not safe to
 	// modify mutate any of the struct's properties though.
