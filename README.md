@@ -1,5 +1,7 @@
 # cron3
-## Go utility program for day-to-day Mongo backups.
+
+Go utility program for day-to-day Mongo backups. Used by [countgo](https://github.com/Aracki/countgo). <br>
+
 * General idea:
   * Execute `mongodump` command
   * Generated `.bson` file upload to S3
@@ -15,3 +17,7 @@
 
 * `go build`
 * `./cron3 2>> log &`
+
+## Populate mongo database with backup
+
+* `mongorestore -d aracki -c visitors /path/file.bson`
