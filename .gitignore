@@ -2,3 +2,4 @@
 dump/*
 config.yaml
 cron3
+.DS_Store
