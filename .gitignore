@@ -1,5 +1,6 @@
 .idea/*
 dump/*
 config.yaml
+config_test.yaml
 cron3
 .DS_Store
