@@ -24,7 +24,7 @@ func mongoDump() error {
 	return nil
 }
 
-func cronFunc() {
+func cronFunc(now time.Time) {
 
 	log.Println(".............")
 	log.Println("starting cron")
@@ -34,7 +34,7 @@ func cronFunc() {
 
 	// generate key for file based on current date
 	// eg. 2019/January/3
-	year, month, day := time.Now().Date()
+	year, month, day := now.Date()
 	key := strconv.Itoa(year) + "/" + month.String() + "/" + strconv.Itoa(day) + ".bson"
 
 	// S3 methods are safe to use concurrently. It is not safe to
@@ -72,7 +72,7 @@ func main() {
 	c := cron.New()
 	c.Start()
 	if err := c.AddFunc(viper.GetString("cron_time"), func() {
-		cronFunc()
+		cronFunc(time.Now())
 	}); err != nil {
 		log.Fatal("cannot parse cron spec:", err.Error())
 	}
