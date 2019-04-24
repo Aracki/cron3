@@ -20,6 +20,10 @@ Go utility program for day-to-day Mongo backups. Used by [countgo](https://githu
 * `go build`
 * `./cron3 2>> log &`
 
+### Run test
+
+* `go test -test.v`
+
 ### Import a .bson file into a mongo database
 
 * `mongorestore -d aracki -c visitors /path/file.bson`

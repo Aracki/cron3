@@ -19,7 +19,11 @@ func TestJanuaryBackups(t *testing.T) {
 		log.Fatalln("fatal error config file: ", err)
 	}
 
-	for i := 1; i <= 31; i++ {
-		cronFunc(time.Date(3000, time.January, i, 0, 0, 0, 0, time.UTC))
+	month := time.January
+	days := 31
+
+	for i := 1; i <= days; i++ {
+		cronFunc(time.Date(3000, month, i, 0, 0, 0, 0, time.UTC))
+		t.Logf("uploaded January %d", i)
 	}
 }
