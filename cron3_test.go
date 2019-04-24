@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/spf13/viper"
-	"log"
 	"testing"
 	"time"
 )
@@ -16,7 +15,8 @@ func TestJanuaryBackups(t *testing.T) {
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatalln("fatal error config file: ", err)
+		t.Fail()
+		t.Fatal("fatal error config file: ", err)
 	}
 
 	month := time.January

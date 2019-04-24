@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -64,8 +63,8 @@ func uploadToS3(svc *s3.S3, dstKey string) (err error) {
 	return nil
 }
 
-// deleteFromS3 will delete backup if there are more than 3 backups for that specific month
-func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
+// deleteFromS3 will delete other backups for the same month
+func deleteFromS3(svc *s3.S3, key string) (err error) {
 
 	ctx := context.Background()
 	bucketName := viper.GetString("bucket_name")
@@ -79,28 +78,28 @@ func deleteFromS3(svc *s3.S3, key string) (deletedKey string, err error) {
 		Prefix: aws.String(prefix),
 	})
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	if len(objects.Contents) == 0 {
-		return "", errors.New("bucket is empty")
+		return errors.New("bucket is empty")
+	}
+	if len(objects.Contents) ==1 {
+		return errors.New("there is only one backup in this month")
 	}
 
-	if len(objects.Contents) > 3 {
-		lastKey := objects.Contents[len(objects.Contents)-4].Key
+	for i, o := range objects.Contents {
+		if *o.Key != key {
+			lastKey := objects.Contents[i].Key
 
-		_, err := svc.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
-			Bucket: aws.String(bucketName),
-			Key:    lastKey,
-		})
-		if err != nil {
-			return "", err
+			_, err := svc.DeleteObjectWithContext(ctx, &s3.DeleteObjectInput{
+				Bucket: aws.String(bucketName),
+				Key:    lastKey,
+			})
+			if err != nil {
+				return err
+			}
 		}
-
-		dKey := *lastKey
-		return dKey, err
-	} else {
-		return "", errors.New(
-			fmt.Sprintf("bucket with prefix=%s has no more than 3 objects", prefix))
 	}
+	return nil
 }

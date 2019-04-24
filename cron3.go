@@ -48,12 +48,10 @@ func cronFunc(now time.Time) {
 		log.Printf("uploaded %s", key)
 	}
 
-	if key, err := deleteFromS3(svc, key); err != nil {
+	if err := deleteFromS3(svc, key); err != nil {
 		log.Println(err.Error())
-	} else if key == "" {
-		log.Printf("nothing to delete")
 	} else {
-		log.Printf("successfully deleted object with key=%s \n", key)
+		log.Printf("successfully deleted old backups")
 	}
 }
 
